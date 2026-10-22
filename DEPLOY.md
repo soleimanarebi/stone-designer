@@ -32,7 +32,7 @@ git push -u origin main
 
 The reference PDFs in `docs/reference/` are git-ignored (licensed copies); only `docs/reference/README.md` is committed.
 
-Suggested Netlify site names, following Glass Designer: `stone-panel-checker` (checker) and `stone-designer` (landing).
+Suggested Netlify site names, following Glass Designer: `stone-designer-app` (checker, https://stone-designer-app.netlify.app) and `stone-designer` (landing, https://stone-designer.netlify.app). Both sites exist; `VITE_APP_URL` is set on the landing site and form detection is on.
 
 ## 2. Create the checker site
 
