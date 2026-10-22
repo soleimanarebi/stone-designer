@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stone Designer</title>
+    <meta name="description" content="Stone Designer checks natural stone cladding panels against BS 8298-2 and BS 8298-4: panel thickness, fixing breakout, returns and joints, in 3D, with every number traced to its source." />
+    <meta name="theme-color" content="#6b4a2b" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/src/site.css" />
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top" id="top">
+      <div class="wrap top-inner">
+        <a class="brand" href="/" aria-label="Stone Designer, home">
+          <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect width="32" height="32" rx="6" fill="currentColor" /><rect x="7" y="7" width="18" height="8" rx="1" fill="var(--paper)" /><rect x="7" y="17" width="8" height="8" rx="1" fill="var(--paper)" /><rect x="17" y="17" width="8" height="8" rx="1" fill="var(--accent)" /></svg>
+          <span>Stone Designer</span>
+        </a>
+        <nav aria-label="Main">
+          <ul class="nav">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#validation">Validation</a></li>
+            <li><a href="#roadmap">Roadmap</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+        <a class="btn btn-primary btn-small" href="%VITE_APP_URL%">Try the checker</a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Natural stone cladding · release 1</p>
+            <h1 id="hero-title">Size stone cladding panels and their fixings with the working on show.</h1>
+            <p class="lead">
+              Enter the panel, the fixings, the stone's test data and the wind. Stone Designer runs the BS 8298 thickness and
+              breakout checks, builds the partial material factor from the test programme, draws the panel and its fixings in 3D,
+              and tells you which clause and page each number came from.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="%VITE_APP_URL%">Try the checker</a>
+              <a class="btn btn-ghost" href="#how">See how it works</a>
+            </div>
+            <p class="fine">Free in your browser. Nothing you enter leaves your device.</p>
+          </div>
+          <figure class="hero-stage">
+            <div class="scene" id="scene" role="img" aria-label="A stone cladding panel in 3D, restrained by four dowels in its top and bottom joints, its face shaded by bending utilisation, highest at mid-span. Drag to rotate.">
+              <div class="panel3d" id="panel3d">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face edge top"></div>
+                <div class="face edge bottom"></div>
+                <div class="face edge left"></div>
+                <div class="face edge right"></div>
+              </div>
+            </div>
+            <figcaption class="fine">Drag to rotate · colour is bending utilisation between the fixing lines</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="strip" aria-label="At a glance">
+        <div class="wrap strip-inner">
+          <p>
+            Release 1 covers flat, rectangular natural stone panels on four fixings, in traditional handset cladding to
+            BS 8298-2:2020 and on rainscreen support systems to BS 8298-4:2020, with dowels, kerf clips or undercut anchors, under
+            wind and a uniform imposed lateral load.
+          </p>
+          <dl class="figures">
+            <div><dt>Structural checks</dt><dd>5</dd></div>
+            <div><dt>Reference documents used</dt><dd>6</dd></div>
+            <div><dt>Values guessed</dt><dd>0</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section id="stone" aria-labelledby="stone-title">
+        <div class="wrap split">
+          <div>
+            <h2 id="stone-title">About natural stone cladding</h2>
+            <p>
+              Stone is a natural, brittle material. It is not made under factory control, so its strength varies from bed to bed
+              and block to block; it cannot yield to relieve a local peak of stress; and weathering, microcracking, damaged edges
+              and the drilling of fixing holes can all reduce its strength in service. The edges and fixing points, where the
+              stresses are highest, are where it is weakest.
+            </p>
+            <p>
+              BS 8298 therefore sizes the panel from tests on the actual stone, at the project thickness, finish and bedding
+              orientation, and applies a partial material factor that grows when the data are thinner: mean rather than lower
+              expected values, three-point rather than four-point bending, dry samples only, a single set, unknown orientation, or
+              no freeze-thaw testing.
+            </p>
+            <p class="source">Summarised from BS 8298-2:2020 clauses 5.5 and 5.6 and Annex D, and BS 8298-4:2020 Annex B.</p>
+          </div>
+          <ul class="facts">
+            <li><strong>3.00</strong><span>base partial material factor for flexure and for fixing breakout, BS 8298 Table 4</span></li>
+            <li><strong>4.20</strong><span>γm of the Portland limestone in the worked example: LEV, four-point, dry, long history, Table E.1</span></li>
+            <li><strong>1.5 · 2.25 · 3.0</strong><span>kN/m², indicative low, medium and high wind for preliminary sizing, Table D.1</span></li>
+            <li><strong>3 of 4</strong><span>fixings assumed to engage on a rainscreen frame, BS 8298-4 B.4</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="why" class="band" aria-labelledby="why-title">
+        <div class="wrap">
+          <h2 id="why-title">Why Stone Designer</h2>
+          <p class="section-lead">A stone check is short, but it hangs on details that are easy to get wrong: which span is the governing one, how many fixings really engage, and which of seven factors the test report supports.</p>
+          <ul class="compare">
+            <li class="compare-card">
+              <h3>Spreadsheets</h3>
+              <p>Fast for one panel, but the Table 4 factors and the span rules get retyped for every project.</p>
+            </li>
+            <li class="compare-card">
+              <h3>FE models</h3>
+              <p>Detailed stresses, but the partial factors, engagement and detailing rules are still yours to apply.</p>
+            </li>
+            <li class="compare-card">
+              <h3>Hand calculations</h3>
+              <p>Clear and checkable, but slow to repeat across panel sizes, fixing positions and load cases.</p>
+            </li>
+            <li class="compare-card compare-ours">
+              <h3>Stone Designer</h3>
+              <p>The BS 8298 method built in, every value sourced, results as you type, and a report laid out for a checker.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="features" aria-labelledby="features-title">
+        <div class="wrap">
+          <h2 id="features-title">What it does</h2>
+          <ul class="cards">
+            <li class="card">
+              <h3>Panel thickness</h3>
+              <p>The flexural check of Annex D: design moment over the longest distance between fixings, required section modulus and required thickness.</p>
+            </li>
+            <li class="card">
+              <h3>Fixing breakout</h3>
+              <p>Design load per fixing with four engaged on handset work and three of four on rainscreen frames, against the tested breakout capacity.</p>
+            </li>
+            <li class="card">
+              <h3>Material factor from the tests</h3>
+              <p>γm built from Table 4 for the flexural and breakout data separately, with a flag when it passes 15 and a stone specialist is needed.</p>
+            </li>
+            <li class="card">
+              <h3>Detailing rules</h3>
+              <p>Restraint positions, dowel sizes, lengths of return, soffit limits, loadbearing fixings, and thermal movement at the joints.</p>
+            </li>
+            <li class="card">
+              <h3>Working you can audit</h3>
+              <p>Each check opens to its formula with your numbers in it, and the document, clause and page each value came from.</p>
+            </li>
+            <li class="card">
+              <h3>A report for the file</h3>
+              <p>A PDF with title block, design data, summary, loads and combinations, a result approval table and the working.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="software" class="band" aria-labelledby="software-title">
+        <div class="wrap">
+          <h2 id="software-title">The software</h2>
+          <p class="section-lead">Inputs on the left, the stone in the middle, the checks on the right. Results update as you type.</p>
+          <figure class="shot">
+            <div class="shot-bar" aria-hidden="true"><span></span><span></span><span></span><code>Stone Designer · stone panel checker</code></div>
+            <img src="/img/app-full.webp" width="1440" height="900" alt="Stone Designer showing a handset limestone panel: inputs on the left, the 3D panel with its dowels in the centre and the checks on the right." loading="lazy" />
+          </figure>
+        </div>
+      </section>
+
+      <section id="how" aria-labelledby="how-title">
+        <div class="wrap">
+          <h2 id="how-title">How it works</h2>
+          <ol class="steps">
+            <li>
+              <span class="step-n" aria-hidden="true">01</span>
+              <h3>Pick a template and edit it</h3>
+              <p>Start from handset cladding, a rainscreen panel or a shopfront stone, then change the size, the fixings, the stone's test data and the loads.</p>
+              <img src="/img/step-inputs.webp" width="320" height="781" alt="The inputs column with template cards, system cards and fixing arrangement cards." loading="lazy" />
+            </li>
+            <li>
+              <span class="step-n" aria-hidden="true">02</span>
+              <h3>Read the checks</h3>
+              <p>Each check shows its utilisation and opens to the working and sources, followed by compliance items and advisories.</p>
+              <img src="/img/step-verify.webp" width="340" height="781" alt="The verification column listing the flexure and breakout checks and compliance items." loading="lazy" />
+            </li>
+            <li>
+              <span class="step-n" aria-hidden="true">03</span>
+              <h3>Export the report</h3>
+              <p>Download a PDF and pass it to the engineer who signs the design off. The tool supports that review; it does not replace it.</p>
+              <img src="/img/step-report.webp" width="662" height="936" alt="A results page of an exported PDF report with the checks and result approval tables." loading="lazy" />
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="results" class="band" aria-labelledby="results-title">
+        <div class="wrap">
+          <h2 id="results-title">Results</h2>
+          <p class="section-lead">The templates as the checker draws them.</p>
+          <ul class="gallery">
+            <li>
+              <p class="label">Handset cladding · utilisation</p>
+              <img src="/img/render-handset.webp" width="706" height="606" alt="Portland limestone panel restrained by four dowels in its bed joints, shaded by bending utilisation." loading="lazy" />
+              <p class="caption">BS 8298-2 Annex E: 23.9 mm needed for flexure; breakout governs the 50 mm panel at 58%.</p>
+            </li>
+            <li>
+              <p class="label">Rainscreen · three of four engaged</p>
+              <img src="/img/render-rainscreen.webp" width="706" height="606" alt="Stone panel on a rainscreen frame, restrained by dowels in its joints, with the support rails behind it." loading="lazy" />
+              <p class="caption">BS 8298-4 Annex C: with three of four fixings engaged, 270 N per fixing.</p>
+            </li>
+            <li>
+              <p class="label">Shopfront · bending stress</p>
+              <img src="/img/render-shopfront.webp" width="706" height="606" alt="Thick limestone shopfront panel shaded by bending stress under wind and crowd load." loading="lazy" />
+              <p class="caption">Wind with a 1.5 kN/m² crowd load: 45.2 mm required in a 75 mm stone.</p>
+            </li>
+            <li>
+              <p class="label">Report · result approval</p>
+              <img src="/img/render-report.webp" width="706" height="606" alt="The checks and result approval tables from the PDF report." loading="lazy" />
+              <p class="caption">Every quantity with its formula, value and clause.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="validation" aria-labelledby="validation-title">
+        <div class="wrap">
+          <h2 id="validation-title">How it is validated</h2>
+          <dl class="metrics">
+            <div><dt>Automated tests</dt><dd>77</dd></div>
+            <div><dt>Worked examples checked</dt><dd>5</dd></div>
+            <div><dt>Agreement with independent hand checks</dt><dd>1 in 10<sup>5</sup></dd></div>
+            <div><dt>Values without a source</dt><dd>0</dd></div>
+          </dl>
+          <div class="callout">
+            <h3>Checked against published worked examples</h3>
+            <p>
+              The engine reproduces the BS 8298-2 Annex E and BS 8298-4 Annex C worked examples (γm = 4.20, Mf = 60 750 N·mm,
+              W = 810 N, 202.5 N and 270 N per fixing), the Annex B thermal movement example (0.43 mm/m over 3.5 m) and two panels
+              of a stone calculation report. Expected results were computed by a separate script, outside the engine, and each case
+              notes where the printed figures differ and why: rounding of fd to 0.71 in the annexes, a fixing count that changes
+              between the two Annex E steps, and a required thickness in the report that does not follow from its own section modulus.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap" class="band" aria-labelledby="roadmap-title">
+        <div class="wrap">
+          <h2 id="roadmap-title">Roadmap</h2>
+          <ul class="road">
+            <li class="road-card"><span class="tag tag-now">Available</span><h3>Handset cladding</h3><p>BS 8298-2 thickness, breakout, restraint positions and dowel sizes.</p></li>
+            <li class="road-card"><span class="tag tag-now">Available</span><h3>Rainscreen panels</h3><p>BS 8298-4 with dowels, kerf clips or undercut anchors.</p></li>
+            <li class="road-card"><span class="tag tag-now">Available</span><h3>Returns and joints</h3><p>Table 6 lengths of return and Annex B thermal movement.</p></li>
+            <li class="road-card"><span class="tag tag-next">Planned</span><h3>Open questions settled</h3><p>Each value the documents leave open, resolved from a source.</p></li>
+            <li class="road-card"><span class="tag tag-next">Planned</span><h3>Point and barrier loads</h3><p>The 500 N access load and BS 6180 barrier loads, once a method is sourced.</p></li>
+            <li class="road-card"><span class="tag tag-later">Later</span><h3>Stone-faced precast and saved projects</h3><p>BS 8298-3 pin layouts, and projects you can share with a reviewer.</p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="about" aria-labelledby="about-title">
+        <div class="wrap narrow">
+          <h2 id="about-title">About</h2>
+          <p>
+            Stone Designer is an independent tool for facade engineers, stone specialists and cladding contractors. It applies its
+            authors' reading of BS 8298-2:2020 and BS 8298-4:2020, with BS 8298-1 and BS 8298-3 where they are cited, and of
+            published fixing manufacturer guidance.
+          </p>
+          <p>
+            It is not produced, reviewed or endorsed by BSI or by any stone supplier or fixing manufacturer. Every design it touches
+            must still be checked and approved by a qualified structural engineer. If something looks wrong, please say so:
+            corrections shape what comes next.
+          </p>
+        </div>
+      </section>
+
+      <section id="contact" class="band" aria-labelledby="contact-title">
+        <div class="wrap contact">
+          <div>
+            <h2 id="contact-title">Get in touch</h2>
+            <p>Questions, corrections, or a stone cladding case you would like covered. We read every message and reply by email.</p>
+            <ul class="contact-points">
+              <li><strong>Bug or wrong result?</strong> Include the inputs, or attach the PDF report when you reply.</li>
+              <li><strong>Want a case covered?</strong> Tell us the stone, the panel size and how it is fixed.</li>
+            </ul>
+            <p class="fine">See the <a href="/privacy.html">privacy notice</a> for how messages are handled.</p>
+          </div>
+          <form class="form" name="contact" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="company-website">
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="hp" aria-hidden="true">
+              <label>Leave this empty <input name="company-website" tabindex="-1" autocomplete="off" /></label>
+            </p>
+            <div class="row">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" autocomplete="name" required />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required />
+              </div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="organisation">Organisation <span class="opt">(optional)</span></label>
+                <input id="organisation" name="organisation" autocomplete="organization" />
+              </div>
+              <div class="field">
+                <label for="subject">Subject</label>
+                <select id="subject" name="subject" required>
+                  <option value="question">A question</option>
+                  <option value="correction">A correction or bug</option>
+                  <option value="case">A cladding case to cover</option>
+                  <option value="other">Something else</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="6" maxlength="2000" required aria-describedby="message-count"></textarea>
+              <span class="count" id="message-count" aria-live="polite">0 / 2000</span>
+            </div>
+            <div class="field check">
+              <input id="consent" name="consent" type="checkbox" value="yes" required />
+              <label for="consent">I agree that my name, email and message may be stored to reply to me, as described in the <a href="/privacy.html">privacy notice</a>.</label>
+            </div>
+            <button class="btn btn-primary" type="submit">Send message</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <p class="foot-brand"><strong>Stone Designer</strong> · Stone cladding checks, with the working on show.</p>
+        <p class="disclaimer">
+          <strong>Disclaimer.</strong> Stone Designer is a design aid. It applies its authors' reading of BS 8298-2:2020 and
+          BS 8298-4:2020 (with BS 8298-1 and BS 8298-3 where cited) and of published fixing manufacturer guidance, and is not
+          produced, reviewed or endorsed by BSI or by any stone supplier, fixing manufacturer or software vendor named on this
+          site. Results depend on the stone test data and inputs you enter, several of which the standards leave to the
+          engineer. Every design must be checked and approved by a qualified structural engineer before use. No liability is
+          accepted for decisions based on its results.
+        </p>
+        <p class="foot-links">© <span id="year">2026</span> Stone Designer · <a href="/privacy.html">Privacy notice</a> · <a href="/#contact">Contact</a> · <a href="%VITE_APP_URL%">Open the checker</a></p>
+      </div>
+    </footer>
+  </body>
+</html>
