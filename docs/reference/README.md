@@ -12,7 +12,7 @@ the others.
 | BS8298-4 | BS 8298-4:2020 Part 4: Stone cladding on rainscreen support systems | `BS 8298-4-2020 …Part 4 Stone cladding on rainscreen-Code of practice.pdf` |
 | BS8298-1 | BS 8298-1:2010 Part 1: General (no 2020 edition of Part 1 was supplied) | `2010/BS-8298-1-2010 ….pdf` |
 | HAZ | HAZ Metal, Stone fixing systems technical catalogue HAZ-SF-EN-04.20 | `Break Out Pin/HAZ Metal Stone Fixing Systems Technical Catalogue HAZ-SF-EN-04.20.pdf` |
-| GFS | Example report: Glass & Façade Solutions, Stone structural calculation (template) | `GFS template-Stone Calc.docx` |
+| REPORT | Example stone structural calculation report (project details withheld) | kept locally, not committed |
 
 Also supplied and not used by release 1:
 

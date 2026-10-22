@@ -100,7 +100,7 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
   const flexSources = [ref("qd"), r.gammaFSource, ref("moment"), ref("gammaM"), TABLE4_SOURCE, ref("fd"), ref("zreq"), ref("treq")];
   checks.push(
     thicknessMode
-      ? check({ id: "C1", title: "Panel thickness for flexure", combo: gov.id, demand: treq, capacity: t, unit: "mm", working: [...flexWorking, "Utilisation = treq/t (report convention)"], sources: [...flexSources, src("GFS", "§4.5 Result approval", "§4.5")] })
+      ? check({ id: "C1", title: "Panel thickness for flexure", combo: gov.id, demand: treq, capacity: t, unit: "mm", working: [...flexWorking, "Utilisation = treq/t (report convention)"], sources: [...flexSources, src("REPORT", "§4.5 Result approval", "§4.5")] })
       : check({ id: "C1", title: "Flexural stress", combo: gov.id, demand: sigma, capacity: fd, unit: "N/mm²", working: [...flexWorking, `Utilisation = σ/fd = (treq/t)²`], sources: flexSources }),
   );
 

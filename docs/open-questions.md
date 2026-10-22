@@ -6,14 +6,14 @@ Values or rules the reference documents leave open. Each one is a user parameter
 ## OQ-01 Combination of wind with imposed lateral loads
 BS 8298-2/-4:2020 5.6.2 (p.18) give γf = 1.5 for wind and snow and refer to BS EN 1990 Annex A
 (not supplied) for the rest. The combination factors for an imposed (crowd or barrier) load acting
-with wind come from the example report (GFS §4.3): leading action × 1.5, accompanying action ×
+with wind come from the example report (REPORT §4.3): leading action × 1.5, accompanying action ×
 0.5 × 1.5. The engine uses γQ = 1.5 and ψ = 0.5 as user parameters with those defaults. Confirm
 against BS EN 1990 and its UK National Annex. The example report also adds the imposed load to
 both wind directions; the engine follows it.
 
 ## OQ-02 Young's modulus of stone
 No supplied document gives E for any stone, and BS 8298-2:2020 5.6.2 NOTE 1 (p.18) says SLS design
-is not applicable to stone cladding. The example report (GFS §4.2) still reports deflections against
+is not applicable to stone cladding. The example report (REPORT §4.2) still reports deflections against
 L/360 from a finite element model. Release 1 has no deflection check and no deflection colour mode.
 
 ## OQ-03 Table 6 between tabulated thicknesses
@@ -40,7 +40,7 @@ target point, or ≥ 75 mm from the corner, which the clause accepts in any case
 E.3 (p.68) uses n = 4 fixings engaged and prints Fd = 810/4 = 203 N, then checks "347.6 ≥ 270", which is
 810/3 from the BS 8298-4 example. The engine computes 202.5 N for n = 4 (validation case 01).
 
-## OQ-08 Printed inconsistencies in the example report (GFS template)
+## OQ-08 Printed inconsistencies in the example report (example report)
 - §4.5 P1 prints qd = 0.00249 N/mm² against combination 2.3.5 (1.35 Dead + 0.5×1.5 wind pressure +
   1.5 uniform), which gives 0.75 × 0.91 + 1.5 × 1.5 = 2.9325 kN/m². 0.00249 is 1.5 × 0.91 + 0.75 × 1.5,
   combination 2.3.1.

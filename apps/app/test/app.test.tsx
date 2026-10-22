@@ -6,10 +6,12 @@ import { Inputs } from "../src/components/Inputs";
 import { Verification } from "../src/components/Verification";
 import { fixingParts, viewValues } from "../src/components/Viewer";
 import { TEMPLATES } from "../src/templates";
+import { WIND_EXAMPLE, windLoadFor } from "../src/wind";
 import { modeColour, nearest, utilisationColour } from "../src/viz";
 
 afterEach(cleanup);
 const byId = (id: string) => TEMPLATES.find((t) => t.id === id)!;
+const noWind = { setup: null, outcome: null, toggle: () => {}, set: () => {} };
 
 describe("templates", () => {
   it("all run without input errors and say where their values come from", () => {
@@ -51,6 +53,52 @@ describe("Verification", () => {
   });
 });
 
+describe("wind calculator", () => {
+  const load = (over: Partial<typeof WIND_EXAMPLE>) => {
+    const o = windLoadFor({ ...structuredClone(WIND_EXAMPLE), ...over });
+    if (!o.ok) throw new Error(o.errors.join("; "));
+    return o.load;
+  };
+  it("defaults to the ventilated (solid wall) case and gives corner or general suction", () => {
+    expect(WIND_EXAMPLE.envelope).toBe("ventilated");
+    const corner = load({ face: "E", position: "corner" });
+    const general = load({ face: "E", position: "general" });
+    expect(corner.governingPressure.zone).toBe("D");
+    expect(corner.governingSuction.zone).toBe("A");
+    expect(corner.suctionNet).toBeGreaterThan(general.suctionNet);
+    expect(load({ face: "E", position: "corner", envelope: "sealed" }).suctionNet).toBeGreaterThan(corner.suctionNet);
+  });
+  it("applies the CWCT 0.8 kN/m² minimum", () => {
+    const l = load({ face: "N", position: "general" });
+    expect(l.pressureNet).toBeLessThan(0.8);
+    expect(l.pressure).toBe(0.8);
+  });
+  it("shows the calculator in the loads group and switches back", () => {
+    const setup = structuredClone(WIND_EXAMPLE);
+    const outcome = windLoadFor(setup);
+    const toggles: boolean[] = [];
+    const sources: string[] = [];
+    const input = structuredClone(byId("handset").input);
+    render(
+      <Inputs
+        input={input}
+        templateId="handset"
+        onTemplate={() => {}}
+        update={(fn) => {
+          const d = structuredClone(input);
+          fn(d);
+          sources.push(d.loads.source);
+        }}
+        wind={{ setup, outcome, toggle: (on) => toggles.push(on), set: () => {} }}
+      />,
+    );
+    expect(screen.getByText(/Pressure \d+\.\d\d kN\/m²/)).toBeTruthy();
+    fireEvent.change(screen.getByLabelText("Wind load"), { target: { value: "tableD1" } });
+    expect(toggles).toEqual([false]);
+    expect(sources).toEqual(["tableD1"]);
+  });
+});
+
 describe("Inputs", () => {
   it("shows picture cards for templates, systems and fixings and reports edits", () => {
     const edits: string[] = [];
@@ -60,6 +108,7 @@ describe("Inputs", () => {
         input={input}
         templateId="handset"
         onTemplate={() => {}}
+        wind={noWind}
         update={(fn) => {
           const d = structuredClone(input);
           fn(d);

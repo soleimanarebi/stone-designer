@@ -7,7 +7,7 @@ export const DOCUMENTS = {
   "BS8298-4": { title: "BS 8298-4:2020 Design and installation of natural stone cladding and lining — Part 4: Stone cladding on rainscreen support systems — Code of practice" },
   "BS8298-1": { title: "BS 8298-1:2010 Code of practice for the design and installation of natural stone cladding and lining — Part 1: General" },
   HAZ: { title: "HAZ Metal, Stone fixing systems technical catalogue HAZ-SF-EN-04.20 (manufacturer guidance)" },
-  GFS: { title: "Example report: Glass & Façade Solutions, Stone structural calculation (template)" },
+  REPORT: { title: "Example report: stone structural calculation (project details withheld)" },
 } as const;
 
 export type DocId = keyof typeof DOCUMENTS;

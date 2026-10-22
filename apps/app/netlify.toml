@@ -2,7 +2,7 @@
 # Package directory = apps/app. Paths below are relative to the repo root.
 # Commands run from the repo root, where the pnpm workspace and lockfile are.
 [build]
-  command = "pnpm --filter @stone/engine --filter @stone/validation --filter @stone/app test && pnpm --filter @stone/app build"
+  command = "pnpm --filter @stone/engine --filter @wind/engine --filter @stone/validation --filter @stone/app test && pnpm --filter @stone/app build"
   publish = "apps/app/dist"
 
 [build.environment]

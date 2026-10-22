@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { ANNEX_B_EXAMPLE, TEMPLATES } from "../templates";
 import { Cite, Group, NumberField, SelectField } from "./fields";
 import { ARRANGEMENTS, arrangementOf, FixingThumb, SystemThumb, TemplateThumb, type Arrangement } from "./Thumbs";
+import { WindCalculator } from "./WindCalculator";
+import type { WindLoad, WindSetup } from "../wind";
 
 type Update = (fn: (draft: StoneInput) => void) => void;
 
@@ -49,7 +51,15 @@ const FIX_TYPES: { value: StoneInput["fixings"]["type"]; label: string }[] = [
   { value: "undercut", label: "Undercut anchor (rainscreen)" },
 ];
 
-export function Inputs({ input, update, onTemplate, templateId }: { input: StoneInput; update: Update; onTemplate: (id: string) => void; templateId: string }) {
+export interface WindProps {
+  setup: WindSetup | null;
+  outcome: { ok: true; load: WindLoad } | { ok: false; errors: string[] } | null;
+  /** Turns the calculator on (with the example or last values) or off. */
+  toggle: (on: boolean) => void;
+  set: (fn: (draft: WindSetup) => void) => void;
+}
+
+export function Inputs({ input, update, onTemplate, templateId, wind }: { input: StoneInput; update: Update; onTemplate: (id: string) => void; templateId: string; wind: WindProps }) {
   const g = input.geometry;
   const fx = input.fixings;
   const st = input.stone;
@@ -235,20 +245,25 @@ export function Inputs({ input, update, onTemplate, templateId }: { input: Stone
       <Group title="Loads">
         <SelectField
           label="Wind load"
-          value={l.source}
+          value={wind.setup ? "calculate" : l.source}
           options={[
-            { value: "project", label: "Project-specific (BS EN 1991-1-4)" },
+            { value: "project", label: "Project-specific, from the wind report" },
+            { value: "calculate", label: "Calculate (BS EN 1991-1-4, UK NA)" },
             { value: "tableD1", label: "Indicative, Table D.1 (preliminary)" },
           ]}
-          onChange={(v) =>
+          onChange={(v) => {
+            if (v === "calculate") return wind.toggle(true);
+            if (wind.setup) wind.toggle(false);
             update((d) => {
               d.loads.source = v;
               if (v === "tableD1") d.loads.windClass ??= "low";
               delete d.factors?.gammaF;
-            })
-          }
+            });
+          }}
         />
-        {l.source === "tableD1" ? (
+        {wind.setup && wind.outcome ? (
+          <WindCalculator setup={wind.setup} set={wind.set} outcome={wind.outcome} />
+        ) : l.source === "tableD1" ? (
           <SelectField
             label="Wind class"
             value={l.windClass ?? "low"}
@@ -269,7 +284,7 @@ export function Inputs({ input, update, onTemplate, templateId }: { input: Stone
           <OptionalNumber label="ψ accomp." value={fac.psi} placeholder="0.5" onChange={(v) => setFac((o) => void (v === undefined ? delete o.psi : (o.psi = v)))} />
         </div>
         <p className="hint">
-          γf 1.5 for wind <Cite>5.6.2</Cite>; γQ and ψ follow the example report <Cite>GFS §4.3, OQ-01</Cite>.
+          γf 1.5 for wind <Cite>5.6.2</Cite>; γQ and ψ follow the example report <Cite>REPORT §4.3, OQ-01</Cite>.
         </p>
       </Group>
 

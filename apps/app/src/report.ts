@@ -1,5 +1,7 @@
 import { DOCUMENTS, ENGINE_VERSION, type EngineResult, type Source, type StoneInput } from "@stone/engine";
+import { DOCUMENTS as WIND_DOCUMENTS, ENGINE_VERSION as WIND_VERSION, FACES } from "@wind/engine";
 import { jsPDF } from "jspdf";
+import type { WindLoad, WindSetup } from "./wind";
 
 /**
  * The built-in PDF fonts only cover Latin-1, so Greek letters and maths symbols are spelled out.
@@ -44,7 +46,7 @@ export function pdfText(s: string): string {
   return out.replace(/[^\x00-\xff]/g, "?");
 }
 
-const fmtSource = (s: Source) => `${s.doc} ${s.ref}, p.${s.page}`;
+const fmtSource = (s: Pick<Source, "ref" | "page"> & { doc: string }) => `${s.doc} ${s.ref}, p.${s.page}`;
 const pct = (u: number) => `${(u * 100).toFixed(0)}%`;
 const BRAND: [number, number, number] = [90, 70, 50];
 const GREY: [number, number, number] = [90, 90, 90];
@@ -208,7 +210,79 @@ export interface ReportOptions {
   date?: Date;
   /** Compress page streams (default true; tests read the text). */
   compress?: boolean;
+  /** Wind calculation that set the wind pressure and suction, when the calculator was used. */
+  wind?: { setup: WindSetup; load: WindLoad };
 }
+
+const FACE_NAME = { N: "North", E: "East", S: "South", W: "West" } as const;
+const f2 = (v: number) => v.toFixed(2);
+const f3 = (v: number) => v.toFixed(3);
+
+/** The wind calculation, laid out as the calculation table of a wind load report. */
+function windSection(w: Writer, { setup, load }: { setup: WindSetup; load: WindLoad }, heading: string) {
+  const { site, building } = setup.input;
+  const r = load.result;
+  const dirs = FACES.map((f) => r.directions.find((d) => d.face === f)!);
+  const ins = FACES.map((f) => setup.input.directions[f]);
+  w.heading(heading, 11);
+  w.paragraph(
+    `Wind actions to BS EN 1991-1-4:2005+A1:2010 with the UK National Annex, PD 6688-1-4:2015 and CWCT Part 2 (wind engine ${WIND_VERSION}). ` +
+      `${site.terrain === "town" ? "Town" : "Country"} terrain, vb,map = ${site.vbMap} m/s, site altitude ${site.altitude} m, North elevation facing ${site.orientation} deg. ` +
+      `Building ${building.widthNS} m (N/S) x ${building.widthEW} m (E/W), height ${building.height} m. Columns are the wind blowing onto each elevation.`,
+  );
+  const col = (title: string) => ({ title, width: 13, align: "right" as const });
+  const row = (label: string, symbol: string, vals: string[], ref: string) => [label, symbol, ...vals, ref];
+  const num = (v: number | undefined, dp = 2) => (v === undefined ? "-" : v.toFixed(dp));
+  w.grid(
+    "Peak velocity pressure at the building height",
+    [{ title: "Factor", width: 34 }, { title: "Symbol", width: 12 }, ...FACES.map((f) => col(`${f} elev.`)), { title: "Reference", width: 22 }],
+    [
+      row("Wind direction", "deg", dirs.map((d) => d.azimuth.toFixed(0)), "Orientation"),
+      row("Altitude factor", "calt", dirs.map((d) => f3(d.top.calt)), "NA.2.5"),
+      row("Basic wind velocity", "vb,0", dirs.map((d) => num(d.top.vb0)), "NA.2.4"),
+      row("Directional factor", "cdir", dirs.map((d) => f3(d.cdir)), "Table NA.1"),
+      row("Seasonal factor", "cseason", dirs.map((d) => num(d.cseason)), "Table NA.2"),
+      row("Probability factor", "cprob", dirs.map((d) => num(d.cprob)), "NA.2.8"),
+      row("Basic wind velocity", "vb", dirs.map((d) => num(d.top.vb)), "EN 4.2"),
+      row("Basic velocity pressure", "qb (kN/m2)", dirs.map((d) => f3(d.top.qb)), "NA.2.18"),
+      row("Distance to shoreline", "km", ins.map((d) => num(d.shorelineKm, 1)), "Site"),
+      ...(site.terrain === "town" ? [row("Distance inside town", "km", ins.map((d) => num(d.townKm, 1)), "Site")] : []),
+      row("Average neighbour height", "have (m)", ins.map((d) => num(d.have, 1)), "Site"),
+      row("Spacing to neighbours", "x (m)", ins.map((d) => num(d.x, 1)), "Site"),
+      row("Displacement height", "hdis (m)", dirs.map((d) => num(d.hdis)), "EN A.5"),
+      row("Effective height", "z - hdis (m)", dirs.map((d) => num(d.top.zMinusHdis)), ""),
+      row("Exposure factor", "ce(z)", dirs.map((d) => num(d.top.ce)), "Figure NA.7"),
+      ...(site.terrain === "town" ? [row("Town correction", "ce,T", dirs.map((d) => num(d.top.ceT)), "Figure NA.8")] : []),
+      row("Peak velocity pressure", "qp (kN/m2)", dirs.map((d) => f3(d.top.qp)), "NA.3"),
+      row("Crosswind width", "b (m)", dirs.map((d) => num(d.b)), "EN Figure 7.5"),
+      row("Depth", "d (m)", dirs.map((d) => num(d.d)), "EN Figure 7.5"),
+      row("e = min(b, 2h)", "e (m)", dirs.map((d) => num(d.e)), "EN Figure 7.5"),
+      row("Slenderness", "h/d", dirs.map((d) => num(d.hd)), "EN 7.2.2"),
+      ...(["A", "B", "C", "D", "E"] as const).map((z) => row(`External pressure coefficient, zone ${z}`, `cpe,${z}`, dirs.map((d) => num(d.cpe[z])), "Table NA.4")),
+    ],
+    { size: 7.5 },
+  );
+  const el = r.elevations.find((e) => e.face === setup.face)!;
+  const env = setup.envelope;
+  w.grid(
+    `Net pressures on the ${FACE_NAME[setup.face]} elevation (${env}, cpi +${r.cpi.positive} / ${r.cpi.negative})`,
+    [{ title: "Zone", width: 10 }, { title: "Wind onto", width: 12 }, { title: "Extent (m)", width: 20 }, { title: "qp (kN/m2)", width: 14, align: "right" }, { title: "cpe", width: 12, align: "right" }, { title: "Funnelling", width: 14 }, { title: "Pressure (kN/m2)", width: 16, align: "right" }, { title: "Suction (kN/m2)", width: 16, align: "right" }],
+    el.cases.map((c) => [c.zone, c.windOnto, `${c.from.toFixed(1)} - ${c.to.toFixed(1)}`, f3(c.qp), f2(c.cpe), c.funnel?.applies ? (c.funnel.disregarded ? "disregarded" : `yes (${f2(c.funnel.factor)})`) : "no", f2(c.net[env].pressure), f2(c.net[env].suction)]),
+    { size: 8 },
+  );
+  const gp = load.governingPressure;
+  const gs = load.governingSuction;
+  w.row("Panel position", `${FACE_NAME[setup.face]} elevation, ${setup.position === "corner" ? `corner zone (within ${f2(load.cornerWidth)} m of a corner)` : "general area"}`);
+  w.row("Net pressure", `${f2(load.pressureNet)} kN/m2 (zone ${gp.zone}, wind onto ${gp.windOnto})`);
+  w.row("Net suction", `${f2(load.suctionNet)} kN/m2 (zone ${gs.zone}, wind onto ${gs.windOnto})`);
+  w.row(
+    "Used in the check",
+    `W+ ${f2(load.pressure)} kN/m2, W- ${f2(load.suction)} kN/m2${setup.cwct ? `, after the CWCT Part 2 2.2.4 design pressure rule (${setup.input.options?.designBasis === "proprietary" ? "proprietary bands" : "0.8 kN/m2 minimum"})` : ", net values"}`,
+  );
+  for (const a of r.advisories) w.paragraph(`${a.message}${a.source ? ` (${fmtSource(a.source)})` : ""}`, { size: 8.5, colour: GREY });
+  w.paragraph(`Not covered by the wind calculation: ${r.notCovered.join("; ")}.`, { size: 8.5, colour: GREY });
+}
+
 
 const ABBREVIATIONS: [string, string][] = [
   ["W+ / W-", "Wind pressure / wind suction"],
@@ -297,7 +371,9 @@ export function buildReport(input: StoneInput, result: EngineResult, opts: Repor
   );
   w.paragraph(opts.disclaimer, { size: 8.5, colour: GREY });
   w.heading("Contents", 11);
-  for (const line of ["1 Introduction", "2 Design data", "3 Summary and conclusion", "4 Results", "5 Compliance and notes", "Appendix A: Abbreviations and units", "Appendix B: Working for each check"]) w.paragraph(line, { size: 9.5 });
+  const contents = ["1 Introduction", "2 Design data", "3 Summary and conclusion", "4 Results", "5 Compliance and notes", "Appendix A: Abbreviations and units", "Appendix B: Working for each check"];
+  if (opts.wind) contents.push("Appendix C: Wind calculation working");
+  for (const line of contents) w.paragraph(line, { size: 9.5 });
 
   // 1 Introduction.
   w.newPage();
@@ -319,7 +395,9 @@ export function buildReport(input: StoneInput, result: EngineResult, opts: Repor
   for (const c of result.checks) for (const s of c.sources) used.add(s.doc);
   for (const a of result.advisories) used.add(a.source.doc);
   for (const c of result.compliance) for (const s of c.sources) used.add(s.doc);
-  [...used].sort().forEach((id, i) => w.paragraph(`[${i + 1}] ${DOCUMENTS[id as keyof typeof DOCUMENTS].title} (${id})`));
+  const refs = [...used].sort().map((id) => `${DOCUMENTS[id as keyof typeof DOCUMENTS].title} (${id})`);
+  if (opts.wind) for (const id of ["EN", "NA", "PD", "CWCT"] as const) refs.push(`${WIND_DOCUMENTS[id].title} (${id})`);
+  refs.forEach((t, i) => w.paragraph(`[${i + 1}] ${t}`));
   w.heading("2.2 Methodology", 11);
   w.paragraph(
     `The panel is treated as a strip of width b = ${Math.round(d.b)} mm spanning L = ${Math.round(d.L)} mm, the maximum distance between fixings (${d.spanDirection} span), with Mf = qd.b.L^2/8. ` +
@@ -365,6 +443,7 @@ export function buildReport(input: StoneInput, result: EngineResult, opts: Repor
   );
   w.paragraph(`Design flexural strength fd = ${input.stone.flexure.fk} / ${d.gammaMFlexure.value.toFixed(2)} = ${d.fd.toFixed(3)} N/mm2${d.Rd !== null && c2 ? `; design breakout capacity Rd = ${d.Rd.toFixed(1)} N` : ""}.`);
   w.heading("4.3 Loads and combinations", 11);
+  if (opts.wind) windSection(w, opts.wind, "4.3.1 Wind actions");
   w.paragraph(
     `Wind pressure +${d.windPressure} kN/m2, wind suction -${d.windSuction} kN/m2${d.imposed ? `, imposed lateral load ${d.imposed} kN/m2` : ""}; gamma_f = ${d.gammaF}${d.imposed ? `, gamma_Q = ${d.gammaQ}, psi = ${d.psi}` : ""}.`,
   );
@@ -417,6 +496,18 @@ export function buildReport(input: StoneInput, result: EngineResult, opts: Repor
     for (const line of c.working) w.paragraph(line, { indent: 3, size: 8.8 });
     w.paragraph(`Sources: ${[...new Set(c.sources.map(fmtSource))].join("; ")}`, { indent: 3, size: 8, colour: GREY });
     w.space(1);
+  }
+
+  if (opts.wind) {
+    w.newPage();
+    w.heading("Appendix C: Wind calculation working");
+    for (const d of opts.wind.load.result.directions) {
+      w.ensure(16);
+      w.paragraph(`Wind onto the ${FACE_NAME[d.face]} elevation (from ${d.azimuth.toFixed(0)} deg)`, { bold: true, size: 10 });
+      for (const st of [...d.steps, ...d.top.steps])
+        w.paragraph(`${st.label}: ${st.symbol} = ${st.expression ? `${st.expression} = ` : ""}${Number.isInteger(st.value) ? st.value : st.value.toFixed(3)}${st.unit ? ` ${st.unit}` : ""}${st.source ? ` (${fmtSource(st.source)})` : ""}`, { indent: 3, size: 8.5 });
+      w.space(1);
+    }
   }
 
   w.finish();

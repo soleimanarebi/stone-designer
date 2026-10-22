@@ -1,8 +1,8 @@
 {
-  "name": "Example report P1: 700 x 800 x 75 mm Grigio Alpi, wind with imposed load",
+  "name": "Example report P1: 700 x 800 x 75 mm limestone, wind with imposed load",
   "description": "As case 03 for the flat 75 mm panel P1. The engine takes the governing combination (imposed leading).",
   "reference": {
-    "source": "GFS template §4.5",
+    "source": "Example report §4.5",
     "printed": {
       "qd": 0.00249,
       "Mf": 139440,
@@ -27,7 +27,7 @@
       "dowelDiameter": 8
     },
     "stone": {
-      "name": "Grigio Alpi limestone",
+      "name": "Limestone",
       "flexure": {
         "fk": 6.9,
         "method": "en12372",

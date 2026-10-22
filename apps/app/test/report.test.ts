@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { DISCLAIMER } from "../src/disclaimer";
 import { buildReport, inputRows, pdfText } from "../src/report";
 import { TEMPLATES } from "../src/templates";
+import { WIND_EXAMPLE, windLoadFor } from "../src/wind";
 
 describe("PDF report", () => {
   it("builds for every template, with the cover, sections and appendices", () => {
@@ -21,6 +22,15 @@ describe("PDF report", () => {
   });
   it("spells out symbols the PDF fonts cannot show", () => {
     expect(pdfText("σ ≤ fd, γm, F∞, √, mm²")).toBe("sigma <= fd, gamma_m, Finf, sqrt, mm2");
+  });
+  it("adds the wind calculation when the calculator set the wind load", () => {
+    const o = windLoadFor(WIND_EXAMPLE);
+    if (!o.ok) throw new Error();
+    const input = structuredClone(TEMPLATES.find((x) => x.id === "rainscreen")!.input);
+    input.loads = { source: "project", windPressure: o.load.pressure, windSuction: o.load.suction };
+    const doc = buildReport(input, runChecks(input), { disclaimer: DISCLAIMER, wind: { setup: WIND_EXAMPLE, load: o.load }, compress: false });
+    const text = doc.output();
+    for (const s of ["4.3.1 Wind actions", "Peak velocity pressure", "Net pressures on the South elevation", "Appendix C: Wind calculation working", "UK National Annex"]) expect(text).toContain(s);
   });
   it("refuses invalid inputs", () => {
     const i = structuredClone(TEMPLATES[0]!.input);

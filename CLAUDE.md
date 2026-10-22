@@ -5,7 +5,8 @@ A web tool for checking natural stone cladding panels against BS 8298-2:2020 (tr
 handset external cladding) and BS 8298-4:2020 (stone cladding on rainscreen support systems):
 panel thickness by flexure, fixing breakout, loadbearing fixing dead load, length of returns,
 restraint dowel size and thermal movement at joints, plus a marketing site. The report output
-is modelled on the example report `docs/reference/GFS template-Stone Calc.docx`.
+is modelled on an example stone calculation report kept locally in `docs/reference/`
+(not committed).
 
 ## Layout (pnpm workspace, Node 22)
 - `packages/engine` — pure TypeScript calculation engine. No UI, no I/O.
@@ -13,6 +14,8 @@ is modelled on the example report `docs/reference/GFS template-Stone Calc.docx`.
     (document, clause/table, page). Unknown values are `TODO_VALUE`.
   - `src/resolve.ts` validates inputs and resolves defaults; `src/checks.ts` builds the
     combinations and checks; `src/index.ts` exports `runChecks()` and `panelField()`.
+- `packages/wind` — the shared wind engine (`@wind/engine`), copied unchanged from
+  `soleimanarebi/wind-loader`. Do not edit it here; see its README to re-sync.
 - `apps/app` — Vite + React + react-three-fiber checker (inputs left, 3D stone centre,
   verification right, PDF report).
 - `apps/site` — static multi-page landing site (Netlify Forms contact form).
