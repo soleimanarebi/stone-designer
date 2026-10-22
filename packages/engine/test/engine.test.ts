@@ -178,6 +178,17 @@ describe("compliance and advisories", () => {
   });
 });
 
+describe("optional breakout", () => {
+  it("skips C2 without Rk and says so", () => {
+    const i = annexE();
+    i.stone.breakout = {};
+    const r = ok(i);
+    expect(r.checks.map((c) => c.id)).toEqual(["C1"]);
+    expect(r.notCovered.find((n) => n.id === "C2")?.reason).toContain("202.5 N");
+    expect(r.compliance.find((c) => c.id === "K3")).toBeUndefined();
+  });
+});
+
 describe("input errors", () => {
   it("reports missing strength and bad geometry", () => {
     const i = annexE();

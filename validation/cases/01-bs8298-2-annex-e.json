@@ -1,0 +1,89 @@
+{
+  "name": "BS 8298-2:2020 Annex E worked example (handset, four fixings)",
+  "description": "Portland Jordans Whitbed 900 x 600 x 50 mm, dowels at the 1/5 points of the length, Table D.1 low wind (1500 N/m2, gf = 1.0), LEV to BS EN 13161, dry, historical data, gm = 4.20.",
+  "reference": {
+    "source": "BS 8298-2:2020 E.2 and E.3, p.66-68",
+    "printed": {
+      "qd": 0.0015,
+      "Mf": 60750,
+      "fd": 0.71,
+      "Zreq": 85563,
+      "treq": 23.9,
+      "W": 810,
+      "Fd": 203,
+      "Rd": 347.6,
+      "check": "347.6 >= 270"
+    },
+    "gap": "fd is printed rounded to 0.71 (exact 0.7119), so Zreq prints 85 563 (exact 85 334) and treq 23.9 (exact 23.85). E.3 uses n = 4 and prints Fd = 203 N, then checks against 270 N, which is 810/3 from BS 8298-4 (OQ-07). The engine gives 202.5 N."
+  },
+  "input": {
+    "system": "handset",
+    "geometry": {
+      "length": 900,
+      "height": 600,
+      "thickness": 50
+    },
+    "fixings": {
+      "type": "dowel",
+      "ax": 180,
+      "ay": 0,
+      "bond": "stack"
+    },
+    "stone": {
+      "name": "Portland limestone (Jordans Whitbed)",
+      "flexure": {
+        "fk": 2.99,
+        "method": "en13161",
+        "basis": "lev",
+        "wetDry": "dry-only",
+        "sampling": "historical",
+        "orientation": "same",
+        "freezeThaw": "lt5"
+      },
+      "breakout": {
+        "Rk": 1460,
+        "testedThickness": 50,
+        "basis": "lev",
+        "wetDry": "dry-only",
+        "sampling": "historical",
+        "orientation": "same",
+        "freezeThaw": "lt5"
+      }
+    },
+    "loads": {
+      "source": "tableD1",
+      "windClass": "low"
+    }
+  },
+  "expected": {
+    "pass": true,
+    "governing": "C2",
+    "checks": {
+      "C1": {
+        "demand": 0.16200000000000003,
+        "capacity": 0.711904761904762,
+        "utilisation": 0.22755852842809365
+      },
+      "C2": {
+        "demand": 202.5,
+        "capacity": 347.6190476190477,
+        "utilisation": 0.5825342465753424
+      }
+    },
+    "derived": {
+      "qd": 0.0015,
+      "Mf": 60750.00000000001,
+      "fd": 0.711904761904762,
+      "Zreq": 85334.44816053512,
+      "treq": 23.851547561326793,
+      "W": 810.0,
+      "Fd": 202.5,
+      "Rd": 347.6190476190477,
+      "gammaMFlexure.value": 4.199999999999999,
+      "gammaMBreakout.value": 4.199999999999999
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

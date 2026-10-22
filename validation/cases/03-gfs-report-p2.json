@@ -1,0 +1,75 @@
+{
+  "name": "Example report P2: 496 x 800 x 47 mm Grigio Alpi, wind with imposed load",
+  "description": "GFS stone calculation template, §4.3 combinations and §5.2 minimum thickness; gm = 10 entered as in the report; utilisation reported as treq/t. No breakout load is given, so C2 is not run.",
+  "reference": {
+    "source": "GFS template §4.3 and §5.2",
+    "printed": {
+      "qd": 0.00293,
+      "Mf": 116361,
+      "fd": 0.69,
+      "Zreq": 168640,
+      "treq": 38,
+      "utilisation": "61%"
+    },
+    "gap": "qd, Mf and Zreq agree to the printed rounding (qd exact 0.0029325). The printed treq = 38 mm does not follow from its own Zreq: sqrt(6 x 168 640 / 496) = 45.2 mm (OQ-08), so the engine reports 96% rather than 61%."
+  },
+  "input": {
+    "system": "handset",
+    "geometry": {
+      "length": 496,
+      "height": 800,
+      "thickness": 47
+    },
+    "fixings": {
+      "type": "dowel",
+      "ax": 99,
+      "ay": 0,
+      "bond": "stack",
+      "dowelDiameter": 8
+    },
+    "stone": {
+      "name": "Grigio Alpi limestone",
+      "flexure": {
+        "fk": 6.9,
+        "method": "en12372",
+        "gammaM": 10,
+        "basis": "mean",
+        "wetDry": "dry-only",
+        "sampling": "one-set",
+        "orientation": "unknown",
+        "freezeThaw": "none"
+      },
+      "breakout": {}
+    },
+    "loads": {
+      "source": "project",
+      "windPressure": 0.91,
+      "windSuction": 0.53,
+      "imposed": 1.5
+    },
+    "options": {
+      "flexureUtilisation": "thickness"
+    }
+  },
+  "expected": {
+    "pass": true,
+    "governing": "C1",
+    "checks": {
+      "C1": {
+        "demand": 45.16635916254486,
+        "capacity": 47,
+        "utilisation": 0.9609863651605289
+      }
+    },
+    "derived": {
+      "qd": 0.0029325,
+      "Mf": 116361.6,
+      "fd": 0.6900000000000001,
+      "Zreq": 168640.0,
+      "treq": 45.16635916254486
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

@@ -25,16 +25,16 @@ export const KPA = 1e-3;
 const pick = <T extends string>(table: Choice<T>[], v: T) => table.find((c) => c.value === v)?.factor;
 
 /** γm = F0·FLEV·F3-4·FH2O·FN·Fα·F∞ (5.6.3.1 Eq. 3, Table 4). `method` undefined = breakout (F3-4 N/A). */
-export function gammaM(t: TestBasis, method?: "en12372" | "en13161", override?: number): GammaM | null {
+export function gammaM(t: Partial<TestBasis>, method?: "en12372" | "en13161", override?: number): GammaM | null {
   if (override !== undefined) return { value: override, components: null };
   const c = {
     F0: method ? F0.flexure.value : F0.breakout.value,
-    FLEV: pick(FLEV, t.basis),
+    FLEV: t.basis && pick(FLEV, t.basis),
     F34: method ? pick(F34, method) : F34_BREAKOUT.value,
-    FH2O: pick(FH2O, t.wetDry),
-    FN: pick(FN, t.sampling),
-    Falpha: pick(FALPHA, t.orientation),
-    Finf: pick(FINF, t.freezeThaw),
+    FH2O: t.wetDry && pick(FH2O, t.wetDry),
+    FN: t.sampling && pick(FN, t.sampling),
+    Falpha: t.orientation && pick(FALPHA, t.orientation),
+    Finf: t.freezeThaw && pick(FINF, t.freezeThaw),
   };
   if (Object.values(c).some((v) => v === undefined)) return null;
   const k = c as Required<{ [K in keyof typeof c]: number }>;
@@ -68,7 +68,7 @@ export interface Resolved {
   qi: number;
   unitWeight: number;
   gmFlex: GammaM;
-  gmBreak: GammaM;
+  gmBreak: GammaM | null;
   combinations: Combination[];
 }
 
@@ -91,12 +91,12 @@ export function resolve(input: StoneInput): { ok: true; r: Resolved } | { ok: fa
 
   const st = input.stone;
   if (!positive(st?.flexure?.fk)) errors.push({ field: "stone.flexure.fk", message: "enter the characteristic flexural strength from testing (N/mm²)", source: refFor("fd", system) });
-  if (!positive(st?.breakout?.Rk)) errors.push({ field: "stone.breakout.Rk", message: "enter the characteristic breakout load from testing (N)", source: refFor("rd", system) });
+  if (st?.breakout?.Rk !== undefined && !positive(st.breakout.Rk)) errors.push({ field: "stone.breakout.Rk", message: "must be a positive number (N), or left blank to skip the breakout check", source: refFor("rd", system) });
   if (st?.unitWeight !== undefined && !positive(st.unitWeight)) errors.push({ field: "stone.unitWeight", message: "must be a positive number (kN/m³)" });
   const gmFlex = st?.flexure ? gammaM(st.flexure, st.flexure.method ?? "en12372", st.flexure.gammaM) : null;
   const gmBreak = st?.breakout ? gammaM(st.breakout, undefined, st.breakout.gammaM) : null;
   if (!gmFlex || !(gmFlex.value >= 1)) errors.push({ field: "stone.flexure", message: "complete the test description (Table 4), or enter γm of at least 1", source: refFor("table4", system) });
-  if (!gmBreak || !(gmBreak.value >= 1)) errors.push({ field: "stone.breakout", message: "complete the test description (Table 4), or enter γm of at least 1", source: refFor("table4", system) });
+  if (st?.breakout?.Rk !== undefined && (!gmBreak || !(gmBreak.value >= 1))) errors.push({ field: "stone.breakout", message: "complete the test description (Table 4), or enter γm of at least 1", source: refFor("table4", system) });
 
   const l = input.loads;
   let wp = NaN;
@@ -187,7 +187,7 @@ export function resolve(input: StoneInput): { ok: true; r: Resolved } | { ok: fa
       qi,
       unitWeight: st.unitWeight ?? UNIT_WEIGHT_DEFAULT.value,
       gmFlex: gmFlex!,
-      gmBreak: gmBreak!,
+      gmBreak: st.breakout?.Rk !== undefined ? gmBreak : null,
       combinations,
     },
   };

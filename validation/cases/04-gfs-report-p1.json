@@ -1,0 +1,73 @@
+{
+  "name": "Example report P1: 700 x 800 x 75 mm Grigio Alpi, wind with imposed load",
+  "description": "As case 03 for the flat 75 mm panel P1. The engine takes the governing combination (imposed leading).",
+  "reference": {
+    "source": "GFS template §4.5",
+    "printed": {
+      "qd": 0.00249,
+      "Mf": 139440,
+      "Zreq": 202087,
+      "treq": 41.62,
+      "utilisation": "55%"
+    },
+    "gap": "The printed qd = 0.00249 is 1.5 x 0.91 + 0.75 x 1.5 (wind leading, 2.3.1), although it is labelled 2.3.5; 2.3.5 gives 0.0029325 (OQ-08). With 0.00249 the printed Mf, Zreq and treq follow exactly; the engine uses the larger value: treq = 45.2 mm, 60%. treq does not depend on b, so P1 and P2 need the same thickness for the same span."
+  },
+  "input": {
+    "system": "handset",
+    "geometry": {
+      "length": 700,
+      "height": 800,
+      "thickness": 75
+    },
+    "fixings": {
+      "type": "dowel",
+      "ax": 140,
+      "ay": 0,
+      "bond": "stack",
+      "dowelDiameter": 8
+    },
+    "stone": {
+      "name": "Grigio Alpi limestone",
+      "flexure": {
+        "fk": 6.9,
+        "method": "en12372",
+        "gammaM": 10,
+        "basis": "mean",
+        "wetDry": "dry-only",
+        "sampling": "one-set",
+        "orientation": "unknown",
+        "freezeThaw": "none"
+      },
+      "breakout": {}
+    },
+    "loads": {
+      "source": "project",
+      "windPressure": 0.91,
+      "windSuction": 0.53,
+      "imposed": 1.5
+    },
+    "options": {
+      "flexureUtilisation": "thickness"
+    }
+  },
+  "expected": {
+    "pass": true,
+    "governing": "C1",
+    "checks": {
+      "C1": {
+        "demand": 45.16635916254486,
+        "capacity": 75,
+        "utilisation": 0.6022181221672648
+      }
+    },
+    "derived": {
+      "qd": 0.0029325,
+      "Mf": 164220.0,
+      "Zreq": 237999.99999999997,
+      "treq": 45.16635916254486
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

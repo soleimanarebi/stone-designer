@@ -59,7 +59,7 @@ Panels hung from their top fixings are outside Annex D (D.1 ii, p.61; B.1 ii, p.
 | `support` | – | `base` (default) or `top-hung` |
 | `stone.name`, `stone.unitWeight` | –, kN/m³ | unit weight default §3.3 |
 | `stone.flexure` | – | `fk` N/mm² and the test description §3.1 |
-| `stone.breakout` | – | `Rk` N per fixing, `testedThickness` mm, and the test description §3.1 |
+| `stone.breakout` | – | `Rk` N per fixing (optional: blank skips C2, listed as not covered), `testedThickness` mm, and the test description §3.1 |
 | `stone.meanFlexural` | N/mm² | optional, for the impact advisory A4 |
 | `loads.source` | – | `project` (BS EN 1991-1-4, by the user) or `tableD1` |
 | `loads.windPressure`, `loads.windSuction` | kN/m² | magnitudes, ≥ 0; with `tableD1` both equal the class pressure |
@@ -159,7 +159,7 @@ Both pass exactly when t ≥ treq.
 ### 6.2 C2 Fixing breakout (BS8298-2 D.4, p.62–63; BS8298-4 B.4, p.51–52)
 
 W = qd·A with A = Lx·Hy (D.6); Fd = W/n (D.7); Rd = Rk/γm (D.8); check Rd ≥ Fd (D.9).
-Compliance item K3 when `testedThickness` ≠ t (D.8 NOTE 2, p.63: the capacity is specific to the tested
+Without `Rk` the check is listed in `notCovered` with Fd shown. Compliance item K3 (only with `Rk`) when `testedThickness` ≠ t (D.8 NOTE 2, p.63: the capacity is specific to the tested
 thickness).
 
 ### 6.3 C3 Loadbearing fixing (only when `fixings.loadbearing.safeLoad` is given)

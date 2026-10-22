@@ -1,0 +1,80 @@
+{
+  "name": "BS 8298-2:2020 Annex B thermal movement example (alpha_c = 10e-6 /C)",
+  "description": "Concrete frame with light granite cladding: frame 40 C at erection, 30 C summer, 10 C winter; cladding 20 C at erection, 50 C summer, -20 C winter; joints at 3.5 m; sealant movement capability 10%; 15 mm joint as in the example. Panel and loads as case 01.",
+  "reference": {
+    "source": "BS 8298-2:2020 Annex B, p.57-58",
+    "printed": {
+      "M_summer": -0.43,
+      "M_winter": -0.01,
+      "movement": 1.5,
+      "joint": 15
+    },
+    "gap": "Annex B rounds 0.43 x 3.5 = 1.505 mm to 1.5 mm and so arrives at a 15 mm joint; exactly, 15.05 mm is needed and a 15 mm joint is 0.3% short. The winter value is printed -0.01; (10-40) x 13e-6 - (-20-20) x 10e-6 = +0.01 mm/m (sign only, it does not govern)."
+  },
+  "input": {
+    "system": "handset",
+    "geometry": {
+      "length": 900,
+      "height": 600,
+      "thickness": 50
+    },
+    "fixings": {
+      "type": "dowel",
+      "ax": 180,
+      "ay": 0,
+      "bond": "stack"
+    },
+    "stone": {
+      "name": "Portland limestone (Jordans Whitbed)",
+      "flexure": {
+        "fk": 2.99,
+        "method": "en13161",
+        "basis": "lev",
+        "wetDry": "dry-only",
+        "sampling": "historical",
+        "orientation": "same",
+        "freezeThaw": "lt5"
+      },
+      "breakout": {
+        "Rk": 1460,
+        "testedThickness": 50,
+        "basis": "lev",
+        "wetDry": "dry-only",
+        "sampling": "historical",
+        "orientation": "same",
+        "freezeThaw": "lt5"
+      }
+    },
+    "loads": {
+      "source": "tableD1",
+      "windClass": "low"
+    },
+    "thermal": {
+      "alphaFrame": 1.3e-05,
+      "alphaCladding": 1e-05,
+      "frameErection": 40,
+      "frameSummer": 30,
+      "frameWinter": 10,
+      "claddingErection": 20,
+      "claddingSummer": 50,
+      "claddingWinter": -20,
+      "jointSpacing": 3.5,
+      "sealantStrain": 10,
+      "jointWidth": 15
+    }
+  },
+  "expected": {
+    "pass": false,
+    "governing": "C6",
+    "checks": {
+      "C6": {
+        "demand": 15.05,
+        "capacity": 15,
+        "utilisation": 1.0033333333333334
+      }
+    }
+  },
+  "tolerance": {
+    "relative": 1e-05
+  }
+}

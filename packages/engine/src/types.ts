@@ -47,9 +47,9 @@ export interface StoneInput {
       /** Direct γm (stone specialist); replaces Table 4. */
       gammaM?: number;
     };
-    breakout: TestBasis & {
-      /** Characteristic breakout load per fixing, N. */
-      Rk: number;
+    breakout: Partial<TestBasis> & {
+      /** Characteristic breakout load per fixing, N. Blank skips C2. */
+      Rk?: number;
       testedThickness?: number;
       gammaM?: number;
     };
@@ -165,9 +165,9 @@ export interface Derived {
   /** Panel weight, N. */
   weight: number;
   gammaMFlexure: GammaM;
-  gammaMBreakout: GammaM;
+  gammaMBreakout: GammaM | null;
   fd: number;
-  Rd: number;
+  Rd: number | null;
   /** Governing design pressure, N/mm². */
   qd: number;
   Mf: number;

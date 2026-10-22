@@ -108,24 +108,28 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
   const Rk = input.stone.breakout.Rk;
   const W = qd * area;
   const Fd = W / r.n;
-  const Rd = Rk / r.gmBreak.value;
-  checks.push(
-    check({
-      id: "C2",
-      title: "Fixing breakout",
-      combo: gov.id,
-      demand: Fd,
-      capacity: Rd,
-      unit: "N",
-      working: [
-        `W = qd·A = ${sig(qd)} × ${r0(r.Lx)} × ${r0(r.Hy)} = ${f(W, 1)} N`,
-        `Fd = W/n = ${f(W, 1)} / ${r.n} = ${f(Fd, 1)} N`,
-        gammaMText(r.gmBreak),
-        `Rd = Rk/γm = ${r0(Rk)} / ${f(r.gmBreak.value)} = ${f(Rd, 1)} N ${Rd >= Fd ? "≥" : "<"} Fd`,
-      ],
-      sources: [ref("totalLoad"), ref("perFixing"), ref("engaged"), TABLE4_SOURCE, ref("rd"), ref("breakoutCheck")],
-    }),
-  );
+  const Rd = Rk !== undefined && r.gmBreak ? Rk / r.gmBreak.value : null;
+  if (Rk !== undefined && r.gmBreak && Rd !== null) {
+    checks.push(
+      check({
+        id: "C2",
+        title: "Fixing breakout",
+        combo: gov.id,
+        demand: Fd,
+        capacity: Rd,
+        unit: "N",
+        working: [
+          `W = qd·A = ${sig(qd)} × ${r0(r.Lx)} × ${r0(r.Hy)} = ${f(W, 1)} N`,
+          `Fd = W/n = ${f(W, 1)} / ${r.n} = ${f(Fd, 1)} N`,
+          gammaMText(r.gmBreak),
+          `Rd = Rk/γm = ${r0(Rk)} / ${f(r.gmBreak.value)} = ${f(Rd, 1)} N ${Rd >= Fd ? "≥" : "<"} Fd`,
+        ],
+        sources: [ref("totalLoad"), ref("perFixing"), ref("engaged"), TABLE4_SOURCE, ref("rd"), ref("breakoutCheck")],
+      }),
+    );
+  } else {
+    notCovered.push({ id: "C2", title: "Fixing breakout", reason: `enter the characteristic breakout load from tests to check the fixings (Fd = ${f(Fd, 1)} N per fixing)`, source: ref("rd") });
+  }
 
   // Dead load (calc-spec §4) and C3 loadbearing fixings (§6.3).
   const gammaN = r.unitWeight * 1e-6; // kN/m³ → N/mm³
@@ -246,7 +250,7 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
     });
   }
   const tested = input.stone.breakout.testedThickness;
-  compliance.push({
+  if (Rk !== undefined) compliance.push({
     id: "K3",
     title: "Breakout test thickness",
     pass: tested !== undefined && Math.abs(tested - t) < 1e-9,
@@ -258,7 +262,7 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
           : `Tested at ${tested} mm, panel ${t} mm: the capacity is specific to the tested thickness.`,
     sources: [ref("testedThickness"), ref("breakoutTest")],
   });
-  const gmMax = Math.max(r.gmFlex.value, r.gmBreak.value);
+  const gmMax = Math.max(r.gmFlex.value, r.gmBreak?.value ?? 0);
   if (gmMax > GAMMA_M_SPECIALIST.value)
     compliance.push({
       id: "K4",
@@ -286,7 +290,7 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
     advisories.push({ id: "A5", message: "Thin stone (50 mm or less) is likely to be saturated in use: test in both wet and dry conditions.", source: ref("wetDry") });
   if (lb?.height !== undefined && lb.height > LOADBEARING_HEIGHT.value)
     advisories.push({ id: "A6", message: `Loadbearing fixing ${lb.height} mm above the bottom of the stone; it should be no more than 150 mm.`, source: LOADBEARING_HEIGHT.source });
-  if (r.gmFlex.components === null || r.gmBreak.components === null)
+  if (r.gmFlex.components === null || r.gmBreak?.components === null)
     advisories.push({ id: "A7", message: "γm entered directly: an alternative to Table 4 should only be used where proven by a stone specialist with sufficient and suitable tests and calculations.", source: ref("gammaM") });
   advisories.push({
     id: "A8",
