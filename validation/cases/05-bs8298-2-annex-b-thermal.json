@@ -65,9 +65,9 @@
   },
   "expected": {
     "pass": false,
-    "governing": "C6",
+    "governing": "C5",
     "checks": {
-      "C6": {
+      "C5": {
         "demand": 15.05,
         "capacity": 15,
         "utilisation": 1.0033333333333334

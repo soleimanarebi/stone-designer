@@ -177,26 +177,7 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
       );
   }
 
-  // C5 Restraint dowel diameter (§6.5).
-  const dia = input.fixings.dowelDiameter;
-  if (sys === "handset" && input.fixings.type === "dowel" && dia !== undefined) {
-    const min = dowelMinimum(t);
-    if (min === undefined) notCovered.push({ id: "C5", title: "Restraint dowel diameter", reason: `BS 8298-2 5.12.7 gives minimum dowel sizes up to nominally 50 mm thick units only (OQ-04)`, source: DOWEL_SOURCE });
-    else
-      checks.push(
-        check({
-          id: "C5",
-          title: "Restraint dowel diameter",
-          demand: min,
-          capacity: dia,
-          unit: "mm",
-          working: [`t = ${t} mm → cramps with dowels not less than ${min} mm diameter`, `Dowel ${dia} mm`],
-          sources: [DOWEL_SOURCE],
-        }),
-      );
-  }
-
-  // C6 Thermal movement at a joint (§6.6).
+  // C5 Thermal movement at a joint (§6.5).
   const th = input.thermal;
   if (th) {
     const Ms = 1000 * ((th.frameSummer - th.frameErection) * th.alphaFrame - (th.claddingSummer - th.claddingErection) * th.alphaCladding);
@@ -206,7 +187,7 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
     const req = delta / (th.sealantStrain / 100);
     checks.push(
       check({
-        id: "C6",
+        id: "C5",
         title: "Joint width for thermal movement",
         demand: req,
         capacity: th.jointWidth,
@@ -248,6 +229,13 @@ export function analyse(input: StoneInput): { ok: true; a: Analysis } | { ok: fa
       message: `Generally not larger than ${SOFFIT.long.value} × ${SOFFIT.short.value} mm (this ${r0(long)} × ${r0(short)}), and three fixings shown adequate (n = ${r.n}).`,
       sources: [ref("soffit")],
     });
+  }
+  // K5 Restraint dowel diameter (§7).
+  const dia = input.fixings.dowelDiameter;
+  if (sys === "handset" && input.fixings.type === "dowel" && dia !== undefined) {
+    const min = dowelMinimum(t);
+    if (min === undefined) notCovered.push({ id: "K5", title: "Restraint dowel diameter", reason: "BS 8298-2 5.12.7 gives minimum dowel sizes up to nominally 50 mm thick units only (OQ-04)", source: DOWEL_SOURCE });
+    else compliance.push({ id: "K5", title: "Restraint dowel diameter", pass: dia >= min, message: `${dia} mm dowel; units of ${t} mm should be restrained with dowels not less than ${min} mm diameter.`, sources: [DOWEL_SOURCE] });
   }
   const tested = input.stone.breakout.testedThickness;
   if (Rk !== undefined) compliance.push({

@@ -68,7 +68,7 @@ describe("Annex D / Annex B checks", () => {
     const r = ok(i);
     expect(r.derived.n).toBe(3);
     expect(byId(r, "C2").demand).toBeCloseTo(270, 9);
-    expect(r.checks.find((c) => c.id === "C5")).toBeUndefined();
+    expect(r.compliance.find((c) => c.id === "K5")).toBeUndefined();
   });
   it("stress mode and thickness mode agree on pass", () => {
     const i = annexE();
@@ -138,12 +138,14 @@ describe("other checks", () => {
     expect(dowelMinimum(60)).toBeUndefined();
     const i = annexE();
     i.fixings.dowelDiameter = 5;
-    expect(byId(ok(i), "C5").pass).toBe(false);
+    expect(ok(i).compliance.find((c) => c.id === "K5")?.pass).toBe(false);
+    i.fixings.dowelDiameter = 6;
+    expect(ok(i).compliance.find((c) => c.id === "K5")?.pass).toBe(true);
   });
   it("Annex B thermal movement", () => {
     const i = annexE();
     i.thermal = { alphaFrame: 13e-6, alphaCladding: 10e-6, frameErection: 40, frameSummer: 30, frameWinter: 10, claddingErection: 20, claddingSummer: 50, claddingWinter: -20, jointSpacing: 3.5, sealantStrain: 10, jointWidth: 15 };
-    const c = byId(ok(i), "C6");
+    const c = byId(ok(i), "C5");
     expect(c.demand).toBeCloseTo((0.43 * 3.5) / 0.1, 9);
     expect(c.pass).toBe(false); // 15.05 mm needed; Annex B rounds to 1.5 mm → 15 mm
   });

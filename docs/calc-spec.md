@@ -54,7 +54,7 @@ Panels hung from their top fixings are outside Annex D (D.1 ii, p.61; B.1 ii, p.
 | `fixings.ax`, `fixings.ay` | mm | §1 |
 | `fixings.engaged` | – | n, 1 to 4; default per §1 |
 | `fixings.bond` | – | `stack` or `staggered` (handset position rule §7) |
-| `fixings.dowelDiameter` | mm | optional, §6.5 |
+| `fixings.dowelDiameter` | mm | optional, §7 K5 |
 | `fixings.loadbearing` | – | optional: `count` (default 2) and `safeLoad` kN per fixing, §6.3 |
 | `support` | – | `base` (default) or `top-hung` |
 | `stone.name`, `stone.unitWeight` | –, kN/m³ | unit weight default §3.3 |
@@ -66,7 +66,7 @@ Panels hung from their top fixings are outside Annex D (D.1 ii, p.61; B.1 ii, p.
 | `loads.windClass` | – | `low`, `medium`, `high` when `source = tableD1` |
 | `loads.imposed` | kN/m² | optional uniform lateral imposed load (crowd/barrier), §4 |
 | `factors.gammaF`, `gammaQ`, `psi`, `gammaG` | – | §4 |
-| `thermal` | – | optional, §6.6 |
+| `thermal` | – | optional, §6.5 |
 | `options.flexureUtilisation` | – | `stress` (default) or `thickness`, §6.1 |
 
 ## 3. Material
@@ -175,13 +175,7 @@ Only when `geometry.returnLength` is given. Table 6: t = 20, 30 → 5·t; 40, 50
 rows, the smaller multiplier of the two neighbouring rows (conservative, OQ-03). Outside 20 to 75 mm the
 check is not run and the item goes to `notCovered`. Demand = return length, capacity = k·t.
 
-### 6.5 C5 Restraint dowel diameter (handset only, BS8298-2 5.12.7, p.37–38)
-
-Only when `fixings.type = "dowel"` and `dowelDiameter` is given. Minimum diameter: t ≤ 30 → 3 mm; 40 → 5 mm;
-50 → 6 mm. 30 < t ≤ 40 uses 5 mm and 40 < t ≤ 50 uses 6 mm (the next row up, OQ-04). Above 50 mm the
-standard gives no minimum: `notCovered`. Demand = minimum, capacity = diameter.
-
-### 6.6 C6 Thermal movement at a joint (BS8298-2 Annex B, Eq. B.1, B.2, p.57–58; informative)
+### 6.5 C5 Thermal movement at a joint (BS8298-2 Annex B, Eq. B.1, B.2, p.57–58; informative)
 
 Only when `thermal` is given: frame and cladding expansion coefficients αf, αc (per °C), temperatures of the
 frame and cladding at erection (tfe, tce), in summer (tfs, tcs) and in winter (tfw, tcw), joint spacing s (m),
@@ -202,6 +196,10 @@ app as an example only.
   three fixings must be shown adequate, so n ≤ 3.
 - K3 breakout test thickness (§6.2).
 - K4 γm > 15 → assessment by a stone specialist (5.6.4, p.20).
+- K5 restraint dowel diameter, handset only (BS8298-2 5.12.7, p.37–38), when `fixings.type = "dowel"` and
+  `dowelDiameter` is given. Minimum diameter: t ≤ 30 → 3 mm; 40 → 5 mm; 50 → 6 mm. 30 < t ≤ 40 uses 5 mm and
+  40 < t ≤ 50 uses 6 mm (the next row up, OQ-04). Above 50 mm the standard gives no minimum: `notCovered`.
+  A detailing rule, so it is a compliance item rather than a check with a utilisation.
 
 ## 8. Advisories
 

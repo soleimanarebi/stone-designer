@@ -84,7 +84,7 @@ export interface StoneInput {
   options?: { flexureUtilisation?: "stress" | "thickness" };
 }
 
-export type CheckId = "C1" | "C2" | "C3" | "C4" | "C5" | "C6";
+export type CheckId = "C1" | "C2" | "C3" | "C4" | "C5";
 
 export interface CheckResult {
   id: CheckId;

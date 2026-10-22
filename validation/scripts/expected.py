@@ -132,7 +132,7 @@ cases.append(("05-bs8298-2-annex-b-thermal.json", {
         "gap": "Annex B rounds 0.43 x 3.5 = 1.505 mm to 1.5 mm and so arrives at a 15 mm joint; exactly, 15.05 mm is needed and a 15 mm joint is 0.3% short. The winter value is printed -0.01; (10-40) x 13e-6 - (-20-20) x 10e-6 = +0.01 mm/m (sign only, it does not govern).",
     },
     "input": {**cases[0][1]["input"], "thermal": {"alphaFrame": af, "alphaCladding": ac, "frameErection": 40, "frameSummer": 30, "frameWinter": 10, "claddingErection": 20, "claddingSummer": 50, "claddingWinter": -20, "jointSpacing": 3.5, "sealantStrain": 10, "jointWidth": 15}},
-    "expected": {"pass": False, "governing": "C6", "checks": {"C6": chk(req, 15)}},
+    "expected": {"pass": False, "governing": "C5", "checks": {"C5": chk(req, 15)}},
     "tolerance": {"relative": 1e-5},
 }))
 
