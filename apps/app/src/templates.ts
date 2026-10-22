@@ -46,13 +46,13 @@ export const TEMPLATES: Template[] = [
     id: "shopfront",
     label: "Shopfront",
     name: "Ground floor shopfront panel with crowd load",
-    note: "Example values from the GFS stone calculation template (panel P1): Grigio Alpi limestone 700 × 800 × 75 mm, fk 6.9 N/mm² with γm 10 as in that report, wind +0.91/−0.53 kN/m² and 1.5 kN/m² crowd load, 8 mm pins. No breakout test load is given there, so enter one to check the fixings.",
+    note: "Example values from a project stone calculation report (panel P1): limestone 700 × 800 × 75 mm, fk 6.9 N/mm² with γm 10 as in that report, wind +0.91/−0.53 kN/m² and 1.5 kN/m² crowd load, 8 mm pins. No breakout test load is given there, so enter one to check the fixings.",
     input: {
       system: "handset",
       geometry: { length: 700, height: 800, thickness: 75 },
       fixings: { type: "dowel", ax: 140, ay: 0, bond: "stack", dowelDiameter: 8 },
       stone: {
-        name: "Grigio Alpi limestone (example data)",
+        name: "Limestone (example data)",
         unitWeight: 27,
         flexure: { fk: 6.9, method: "en12372", gammaM: 10, basis: "mean", wetDry: "dry-only", sampling: "one-set", orientation: "unknown", freezeThaw: "none" },
         breakout: { basis: "mean", wetDry: "dry-only", sampling: "one-set", orientation: "unknown", freezeThaw: "none" },

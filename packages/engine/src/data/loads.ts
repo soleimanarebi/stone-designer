@@ -19,8 +19,8 @@ export const UNIT_WEIGHT_PRESETS: { value: string; label: string; unitWeight: So
 ];
 
 /** Combination of wind with an imposed lateral load (OQ-01): example report §4.3. */
-export const GAMMA_Q: Sourced<number> = { value: 1.5, source: src("GFS", "§4.3 Loads combinations (ULS)", "§4.3") };
-export const PSI: Sourced<number> = { value: 0.5, source: src("GFS", "§4.3 Loads combinations (ULS)", "§4.3") };
+export const GAMMA_Q: Sourced<number> = { value: 1.5, source: src("REPORT", "§4.3 Loads combinations (ULS)", "§4.3") };
+export const PSI: Sourced<number> = { value: 0.5, source: src("REPORT", "§4.3 Loads combinations (ULS)", "§4.3") };
 /** Partial factor on dead load, for information (OQ-11). */
 export const GAMMA_G: Sourced<number> = { value: 1.35, source: src("HAZ", "Applied loads, dead loads", "9 (PDF)") };
 

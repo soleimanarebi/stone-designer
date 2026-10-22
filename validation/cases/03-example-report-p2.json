@@ -1,8 +1,8 @@
 {
-  "name": "Example report P2: 496 x 800 x 47 mm Grigio Alpi, wind with imposed load",
-  "description": "GFS stone calculation template, §4.3 combinations and §5.2 minimum thickness; gm = 10 entered as in the report; utilisation reported as treq/t. No breakout load is given, so C2 is not run.",
+  "name": "Example report P2: 496 x 800 x 47 mm limestone, wind with imposed load",
+  "description": "Example stone calculation report, §4.3 combinations and §5.2 minimum thickness; gm = 10 entered as in the report; utilisation reported as treq/t. No breakout load is given, so C2 is not run.",
   "reference": {
-    "source": "GFS template §4.3 and §5.2",
+    "source": "Example report §4.3 and §5.2",
     "printed": {
       "qd": 0.00293,
       "Mf": 116361,
@@ -28,7 +28,7 @@
       "dowelDiameter": 8
     },
     "stone": {
-      "name": "Grigio Alpi limestone",
+      "name": "Limestone",
       "flexure": {
         "fk": 6.9,
         "method": "en12372",

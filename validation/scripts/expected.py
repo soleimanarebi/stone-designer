@@ -71,8 +71,8 @@ cases.append(("02-bs8298-4-annex-c.json", {
     "tolerance": {"relative": 1e-5},
 }))
 
-# Example report (GFS template): Grigio Alpi limestone, fk 6.9, gm 10 (entered), wind +0.91 / -0.53, imposed 1.5 kN/m2.
-def gfs(Lx, Hy, t):
+# Example report (example report): Limestone, fk 6.9, gm 10 (entered), wind +0.91 / -0.53, imposed 1.5 kN/m2.
+def report_panel(Lx, Hy, t):
     wp, ws, qi, gf, gq, psi = 0.91, 0.53, 1.5, 1.5, 1.5, 0.5
     combos = [gf*wp + psi*gq*qi, gf*ws + psi*gq*qi, psi*gf*wp + gq*qi, psi*gf*ws + gq*qi]
     qd = max(combos) / 1000          # 2.9325 kN/m2: 0.75 x 0.91 + 1.5 x 1.5
@@ -80,38 +80,38 @@ def gfs(Lx, Hy, t):
     Mf, fd, Z, treq, sigma = flexure(qd, b, L, 6.9, 10, t)
     return qd, Mf, fd, Z, treq
 
-def gfs_input(Lx, Hy, t):
+def report_input(Lx, Hy, t):
     return {"system": "handset", "geometry": {"length": Lx, "height": Hy, "thickness": t},
             "fixings": {"type": "dowel", "ax": round(Lx / 5), "ay": 0, "bond": "stack", "dowelDiameter": 8},
-            "stone": {"name": "Grigio Alpi limestone", "flexure": {"fk": 6.9, "method": "en12372", "gammaM": 10, "basis": "mean", "wetDry": "dry-only", "sampling": "one-set", "orientation": "unknown", "freezeThaw": "none"}, "breakout": {}},
+            "stone": {"name": "Limestone", "flexure": {"fk": 6.9, "method": "en12372", "gammaM": 10, "basis": "mean", "wetDry": "dry-only", "sampling": "one-set", "orientation": "unknown", "freezeThaw": "none"}, "breakout": {}},
             "loads": {"source": "project", "windPressure": 0.91, "windSuction": 0.53, "imposed": 1.5},
             "options": {"flexureUtilisation": "thickness"}}
 
-qd, Mf, fd, Z, treq = gfs(496, 800, 47)
-cases.append(("03-gfs-report-p2.json", {
-    "name": "Example report P2: 496 x 800 x 47 mm Grigio Alpi, wind with imposed load",
-    "description": "GFS stone calculation template, §4.3 combinations and §5.2 minimum thickness; gm = 10 entered as in the report; utilisation reported as treq/t. No breakout load is given, so C2 is not run.",
+qd, Mf, fd, Z, treq = report_panel(496, 800, 47)
+cases.append(("03-example-report-p2.json", {
+    "name": "Example report P2: 496 x 800 x 47 mm limestone, wind with imposed load",
+    "description": "Example stone calculation report, §4.3 combinations and §5.2 minimum thickness; gm = 10 entered as in the report; utilisation reported as treq/t. No breakout load is given, so C2 is not run.",
     "reference": {
-        "source": "GFS template §4.3 and §5.2",
+        "source": "Example report §4.3 and §5.2",
         "printed": {"qd": 0.00293, "Mf": 116361, "fd": 0.69, "Zreq": 168640, "treq": 38, "utilisation": "61%"},
         "gap": "qd, Mf and Zreq agree to the printed rounding (qd exact 0.0029325). The printed treq = 38 mm does not follow from its own Zreq: sqrt(6 x 168 640 / 496) = 45.2 mm (OQ-08), so the engine reports 96% rather than 61%.",
     },
-    "input": gfs_input(496, 800, 47),
+    "input": report_input(496, 800, 47),
     "expected": {"pass": True, "governing": "C1", "checks": {"C1": chk(treq, 47)},
                  "derived": {"qd": qd, "Mf": Mf, "fd": fd, "Zreq": Z, "treq": treq}},
     "tolerance": {"relative": 1e-5},
 }))
 
-qd, Mf, fd, Z, treq = gfs(700, 800, 75)
-cases.append(("04-gfs-report-p1.json", {
-    "name": "Example report P1: 700 x 800 x 75 mm Grigio Alpi, wind with imposed load",
+qd, Mf, fd, Z, treq = report_panel(700, 800, 75)
+cases.append(("04-example-report-p1.json", {
+    "name": "Example report P1: 700 x 800 x 75 mm limestone, wind with imposed load",
     "description": "As case 03 for the flat 75 mm panel P1. The engine takes the governing combination (imposed leading).",
     "reference": {
-        "source": "GFS template §4.5",
+        "source": "Example report §4.5",
         "printed": {"qd": 0.00249, "Mf": 139440, "Zreq": 202087, "treq": 41.62, "utilisation": "55%"},
         "gap": "The printed qd = 0.00249 is 1.5 x 0.91 + 0.75 x 1.5 (wind leading, 2.3.1), although it is labelled 2.3.5; 2.3.5 gives 0.0029325 (OQ-08). With 0.00249 the printed Mf, Zreq and treq follow exactly; the engine uses the larger value: treq = 45.2 mm, 60%. treq does not depend on b, so P1 and P2 need the same thickness for the same span.",
     },
-    "input": gfs_input(700, 800, 75),
+    "input": report_input(700, 800, 75),
     "expected": {"pass": True, "governing": "C1", "checks": {"C1": chk(treq, 75)},
                  "derived": {"qd": qd, "Mf": Mf, "Zreq": Z, "treq": treq}},
     "tolerance": {"relative": 1e-5},

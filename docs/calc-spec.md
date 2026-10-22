@@ -117,19 +117,19 @@ Design lateral pressures (one combination per wind direction when qi = 0):
 
 - `W+`: qd = γf · wp; `W−`: qd = γf · ws.
 
-With qi > 0, four combinations follow the example report (GFS §4.3, combinations 2.3.1–2.3.8, which
+With qi > 0, four combinations follow the example report (REPORT §4.3, combinations 2.3.1–2.3.8, which
 also add 1.35 × dead; dead load gives no lateral bending in a vertical panel):
 
 - `W+ lead`: γf·wp + ψ·γQ·qi; `W− lead`: γf·ws + ψ·γQ·qi;
 - `I lead (W+)`: ψ·γf·wp + γQ·qi; `I lead (W−)`: ψ·γf·ws + γQ·qi.
 
-γQ default 1.5 and ψ default 0.5 (GFS §4.3). The imposed load is added to both wind directions, as in
+γQ default 1.5 and ψ default 0.5 (REPORT §4.3). The imposed load is added to both wind directions, as in
 the example report. BS EN 1990 is not supplied (OQ-01).
 
 The governing combination for §6.1 and §6.2 is the one with the largest qd.
 
 Dead load for the loadbearing fixings: G = γ · t · Lx · Hy (N), with γ in N/mm³. Its design value
-γG·G uses γG = 1.35 (HAZ p.9; GFS §4.3), shown for information (§6.3).
+γG·G uses γG = 1.35 (HAZ p.9; REPORT §4.3), shown for information (§6.3).
 
 ## 5. Spans
 
@@ -152,7 +152,7 @@ qd (N/mm²) from §4; Mf = qd·b·L²/8 (D.2); fd = fk/γm (D.3); Zreq = Mf/fd (
 
 - `stress` (default): demand σ = 6·Mf/(b·t²), capacity fd, utilisation σ/fd = (treq/t)².
 - `thickness`: demand treq, capacity t, utilisation treq/t (the example report's "Uti. = required
-  thickness / panel thickness", GFS §4.5).
+  thickness / panel thickness", REPORT §4.5).
 
 Both pass exactly when t ≥ treq.
 
@@ -225,7 +225,7 @@ app as an example only.
 | BS8298-4 | BS 8298-4:2020 Part 4: Stone cladding on rainscreen support systems — Code of practice |
 | BS8298-1 | BS 8298-1:2010 Code of practice for the design and installation of natural stone cladding and lining — Part 1: General |
 | HAZ | HAZ Metal, Stone fixing systems technical catalogue HAZ-SF-EN-04.20 |
-| GFS | Glass & Façade Solutions, Stone structural calculation (example report template) |
+| REPORT | Example stone structural calculation report (project details withheld) |
 
 ## 10. Display field (`panelField`)
 
@@ -235,3 +235,29 @@ the fixings and −qd·b·c'²/2 on the overhang (c' the distance beyond the fix
 utilisation σ/fd. The maximum equals C1 in `stress` mode. It is uniform across the width and is shown as
 "Annex D one-way model": it is not a plate analysis. No deflection is shown: Young's modulus is not given
 (OQ-02) and BS8298-2 5.6.2 NOTE 1 (p.18) states SLS design is not applicable to stone cladding.
+
+## 11. Wind calculator (app)
+
+Besides `project` values from a wind report and the indicative Table D.1 classes, the app can
+calculate the wind load. The calculation is the shared wind engine `packages/wind`
+(`@wind/engine`), copied unchanged from `soleimanarebi/wind-loader` so that Stone Designer,
+Glass Designer, GRC Designer and Wind Loader give the same numbers; its own calc spec covers
+BS EN 1991-1-4:2005+A1:2010, the UK NA, PD 6688-1-4:2015 and CWCT Part 2. The stone engine
+itself takes only `loads.source = "project"` with `windPressure` and `windSuction`.
+
+The user enters the site, the building and the wind inputs for each elevation, then places the
+panel: its elevation, corner zone (A) or general area, and the envelope type (default
+ventilated rainscreen, q·cpe, the same as the solid wall case cpi 0 / 0 in the example wind
+report; sealed adds cpi +0.2 / −0.3, EN 7.2.9(6)). From the elevation summary of the wind
+engine:
+
+- `windPressure` = maximum net pressure on the elevation (zone D, all wind directions);
+- `windSuction` = largest net suction magnitude: zone A and the other zones for a corner panel,
+  the zones other than A for a general panel;
+- with the CWCT Part 2 2.2.4 rule on (default), the design values (±0.8 kN/m² minimum, or the
+  proprietary bands) are used, otherwise the net values;
+- each value is rounded up to 0.01 kN/m².
+
+The PDF report then adds §4.3.1 (the peak velocity pressure table for the four directions, cpe,
+the net pressures on the panel's elevation and the values used) and Appendix C (the working for
+each direction with sources).
